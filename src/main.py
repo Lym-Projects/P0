@@ -6,12 +6,34 @@ def conditionCheck():
     pass
 
 def varsCheck(lines: str) -> tuple:
-    # Remove VARS and the variables itself from str
-    pass
+    flag = True
+    variables = {}
+    # Check if str starts with VARS
+    if not lines.startswith("VARS"):
+        flag = False
+    # Remove VARS from str
+    lines = lines[4:]
+    # Get variables names
+        # Loop through the str to find the ";", make a copy of the str and cut it [:i] and do split(","), this list is the variables
+    varstr = lines
+    lastidx = 0
+    for i in range(len(lines)):
+        if lines[i] == ";":
+            varstr = lines[:i].split(",")
+            lastidx = i
+            break
+    # Add the variables to the dictionary, default value is "none"
+    for var in varstr:
+        variables[var] = "none"
+    # Remove the variables from str
+    lines = lines[lastidx+1:]
+    return variables, lines, flag
 
 def procsCheck(lines: str, variables: dict) -> tuple:
+    flag = True
+    methods = {}
     # Remove PROCS and the methods itself from str
-    pass
+    return methods, lines, flag
 
 def syntax(lines: list) -> bool:
     flag = True
@@ -26,10 +48,10 @@ def syntax(lines: list) -> bool:
     # Look for VARS or PROCS
     variables = {}
     methods = {}
-    if lines.startswith("VARS"):
-        variables, lines = varsCheck(lines)
-    elif lines.startswith("PROCS"):
-        methods, lines = procsCheck(lines, variables)
+    if lines.startswith("VARS") and flag:
+        variables, lines, flag = varsCheck(lines)
+    elif lines.startswith("PROCS") and flag:
+        methods, lines, flag = procsCheck(lines, variables)
     return flag
 
 def main():
