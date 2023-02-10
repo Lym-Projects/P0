@@ -7,6 +7,7 @@ def conditionCheck():
 
 def varsCheck(lines: str) -> tuple:
     aplphabet = "abcdefghijklmnñopqrstuvwxyz"
+    alphanumeric = aplphabet + "0123456789"
     flag = True
     variables = {}
     # Check if str starts with VARS
@@ -21,12 +22,19 @@ def varsCheck(lines: str) -> tuple:
     for i in range(len(lines)):
         if lines[i:i+5] == "procs":
             varstr = lines[:i].split(",")
+            # If there's an "" var, then flag false
+            for var in varstr:
+                if var == "":
+                    flag = False
             lastidx = i
             break
     # Check if variables are valid, only condition is that it must start with a letter
     for var in varstr:
         if var[0] not in aplphabet:
             flag = False
+        for char in var:
+            if char not in alphanumeric:
+                flag = False
     # Add the variables to the dictionary, default value is "none"
     for var in varstr:
         variables[var] = "none"
@@ -42,29 +50,50 @@ def procsCheck(lines: str, variables: dict) -> tuple:
         flag = False
     # Remove procs from str
     lines = lines[4:]
-    print(f"\n{lines}")
     # Make method object and try to separate every method (starts and ends with [] but be careful with nested [])
     method = {}
     i = 0
-    count = 0
-    while True:
+    condition = True
+    while condition:
+        method = {}
+        if i >= len(lines):
+            break
+        # Get the name of the method
         if lines[i] == "[":
-            count += 1
             method["name"] = lines[:i]
-            # Find the right closing bracket
-            unclosedbrakets = 1
-            for j in range(i+1, len(lines)):
-                if lines[j] == "[":
-                    unclosedbrakets += 1
-                elif lines[j] == "]":
-                    if unclosedbrakets == 1:
-                        method["body"] = lines[i:j]
-                        methods[method["name"]] = method
-                        i = j+1
-                        break
-        
+            lines = lines[i:]
+            i = 0
+            #print("TEST: ", method["name"], lines)
+            # Get the body of the method
+            unclosed = 0
+            for j in range(i, len(lines)):
+                if lines[j] == "]":
+                    unclosed -= 1
+                elif lines[j] == "[":
+                    unclosed += 1
+                if unclosed == 0:
+                    method["body"] = lines[i:j+1]
+                    lines = lines[j+1:]
+                    i = 0
+                    print(f"\nTest: {method['name']} = {method['body']}")
+                    break
+            if "body" not in method:
+                flag = False
         i += 1
-    # If there are no methods, flag is Fa
+    # If there are no methods, flag is False
+    if len(methods) == 0:
+        flag = False
+    # All methods must have name, except for the last one. They must also have body, if emtpy then flag is False
+    for key in methods:
+        if key == "":
+            flag = False
+        if methods[key]["body"] == "":
+            flag = False
+    # Print for testing
+    for key in methods:
+        #print(f"\nName: {methods[key]['name']}\nBody: {methods[key]['body']}")
+        pass
+
     return methods, lines, flag
 
 def syntax(lines: list) -> bool:
