@@ -2,12 +2,16 @@ import nltk
 import sys
 import os
 
+global aplphabet
+global alphanumeric
+
+alphabet = "abcdefghijklmnñopqrstuvwxyz"
+alphanumeric = alphabet + "0123456789"
+
 def conditionCheck():
     pass
 
 def varsCheck(lines: str) -> tuple:
-    aplphabet = "abcdefghijklmnñopqrstuvwxyz"
-    alphanumeric = aplphabet + "0123456789"
     flag = True
     variables = {}
     # Check if str starts with VARS
@@ -30,7 +34,7 @@ def varsCheck(lines: str) -> tuple:
             break
     # Check if variables are valid, only condition is that it must start with a letter
     for var in varstr:
-        if var[0] not in aplphabet:
+        if var[0] not in alphabet:
             flag = False
         for char in var:
             if char not in alphanumeric:
@@ -51,21 +55,25 @@ def procsCheck(lines: str, variables: dict) -> tuple:
     # Remove procs from str
     lines = lines[4:]
     # Make method object and try to separate every method (starts and ends with [] but be careful with nested [])
-    method = {}
     i = 0
-    condition = True
-    while condition:
+    while True:
+        #print(f"{lines[i:]}")
         method = {}
         if i >= len(lines):
             break
         # Get the name of the method
         if lines[i] == "[":
-            method["name"] = lines[:i]
+            # After it finds the candidate to instructions block (last one) then we will use red flag if there's even another method
+            if lines[:i] == "]":
+                method["name"] = "instructions block"
+            else:
+                method["name"] = lines[:i]
             lines = lines[i:]
             i = 0
             #print("TEST: ", method["name"], lines)
             # Get the body of the method
             unclosed = 0
+            print(lines[i])
             for j in range(i, len(lines)):
                 if lines[j] == "]":
                     unclosed -= 1
@@ -73,7 +81,15 @@ def procsCheck(lines: str, variables: dict) -> tuple:
                     unclosed += 1
                 if unclosed == 0:
                     method["body"] = lines[i:j+1]
-                    lines = lines[j+1:]
+                    # Add method to methods dictionary
+                    methods[method["name"]] = method
+                    if j+1 < len(lines):
+                        if lines[j+1] == "[":
+                            lines = lines[j:]
+                        else:
+                            lines = lines[j+1:]
+                    else:
+                        lines = lines[j+1:]
                     i = 0
                     print(f"\nTest: {method['name']} = {method['body']}")
                     break
@@ -85,8 +101,12 @@ def procsCheck(lines: str, variables: dict) -> tuple:
         flag = False
     # All methods must have name, except for the last one. They must also have body, if emtpy then flag is False
     for key in methods:
-        if key == "":
+        if key == "" or key[0] not in alphabet:
             flag = False
+        # key must start with a letter and have alfanumeric characters
+        for char in key:
+            if char not in alphanumeric:
+                flag = False
         if methods[key]["body"] == "":
             flag = False
     # Print for testing
