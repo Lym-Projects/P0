@@ -1,0 +1,16 @@
+
+ROBOT_R
+VARS a,b,c
+PROCS
+procedimiento [|p,d| 
+if: facing: north then: [goto: 3,a] else: [goto: 3,a];
+if: facing: south then: [goto: 3,a] else: [goto: 3,a];
+]
+procedimiento2 [||
+if: facing: north then: [goto: 3,a] else: [goto: 3,a];
+if: facing: south then: [goto: 3,a] else: [goto: 3,a];
+]
+[
+if: facing: north then: [goto: 3,a] else: [goto: 3,a];
+if: facing: south then: [goto: 3,a] else: [goto: 3,a];
+]

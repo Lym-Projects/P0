@@ -205,7 +205,7 @@ jumpInDir: a, south;
 jumpInDir: a, west;
 jumpInDir: a, east;
 nop:;
-if: facing: north then: [goto: 3,a] else: [if: facing: north then: [goto: 3,a] else: [goto: 3,a];
+if: facing: north then: [goto: 3,a] else: [if: facing: north then: [goto: 3,a] else: [goto: 3,a]];
 if: facing: south then: [goto: 3,a] else: [goto: 3,a];
 if: facing: east then: [goto: 3,a] else: [goto: 3,a];
 if: facing: west then: [goto: 3,a] else: [goto: 3,a];

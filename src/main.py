@@ -8,8 +8,12 @@ global alphanumeric
 alphabet = "abcdefghijklmnñopqrstuvwxyz"
 alphanumeric = alphabet + "0123456789"
 
-def conditionCheck():
-    pass
+def instructionsCheck(variables: dict, methods: dict) -> tuple:
+    flag = True
+    # Check every method body
+    for method in methods.values():
+        pass
+    return methods, flag
 
 def varsCheck(lines: str) -> tuple:
     flag = True
@@ -135,8 +139,11 @@ def syntax(lines: list) -> bool:
     if lines.startswith("vars") and flag:
         variables, lines, flag = varsCheck(lines)
     methods, lines, flag = procsCheck(lines, variables)
+    methods, flag = instructionsCheck(variables, methods)
     print(f"\nVariables: {variables}")
-    print(f"\nMethods: {methods}")
+    #print(f"\nMethods: {methods}")
+    for i in methods:
+        print(f"\nKey: {i}")
     return flag
 
 def main():
