@@ -43,7 +43,7 @@ def varsCheck(lines: str) -> tuple:
     for var in varstr:
         variables[var] = "none"
     # Remove the variables from str
-    lines = lines[lastidx+1:]
+    lines = lines[lastidx:]
     return variables, lines, flag
 
 def procsCheck(lines: str, variables: dict) -> tuple:
@@ -51,9 +51,10 @@ def procsCheck(lines: str, variables: dict) -> tuple:
     methods = {}
     # Check existance of procs
     if not lines.startswith("procs"):
+        #print("false in #1")
         flag = False
     # Remove procs from str
-    lines = lines[4:]
+    lines = lines[5:]
     # Make method object and try to separate every method (starts and ends with [] but be careful with nested [])
     i = 0
     while True:
@@ -65,7 +66,7 @@ def procsCheck(lines: str, variables: dict) -> tuple:
         if lines[i] == "[":
             # After it finds the candidate to instructions block (last one) then we will use red flag if there's even another method
             if lines[:i] == "]":
-                method["name"] = "instructions block"
+                method["name"] = "instructionsblock0"
             else:
                 method["name"] = lines[:i]
             lines = lines[i:]
@@ -73,7 +74,6 @@ def procsCheck(lines: str, variables: dict) -> tuple:
             #print("TEST: ", method["name"], lines)
             # Get the body of the method
             unclosed = 0
-            print(lines[i])
             for j in range(i, len(lines)):
                 if lines[j] == "]":
                     unclosed -= 1
@@ -91,29 +91,32 @@ def procsCheck(lines: str, variables: dict) -> tuple:
                     else:
                         lines = lines[j+1:]
                     i = 0
-                    print(f"\nTest: {method['name']} = {method['body']}")
                     break
-            if "body" not in method:
-                flag = False
         i += 1
     # If there are no methods, flag is False
     if len(methods) == 0:
+        #print("false in #2")
         flag = False
     # All methods must have name, except for the last one. They must also have body, if emtpy then flag is False
     for key in methods:
         if key == "" or key[0] not in alphabet:
+            #print("false in #3")
             flag = False
         # key must start with a letter and have alfanumeric characters
         for char in key:
             if char not in alphanumeric:
+                #print("false in #4")
                 flag = False
-        if methods[key]["body"] == "":
+        if methods[key].get("body") == None:
+            #print("false in #5")
             flag = False
-    # Print for testing
-    for key in methods:
-        #print(f"\nName: {methods[key]['name']}\nBody: {methods[key]['body']}")
-        pass
-
+        elif methods[key]["body"] == "":
+            #print("false in #6")
+            flag = False
+    # # Print for testing
+    # print(f"\nMethods:")
+    # for key in methods:
+    #     print(f"\nkey = {key} : body = {methods[key]}")
     return methods, lines, flag
 
 def syntax(lines: list) -> bool:
@@ -132,6 +135,8 @@ def syntax(lines: list) -> bool:
     if lines.startswith("vars") and flag:
         variables, lines, flag = varsCheck(lines)
     methods, lines, flag = procsCheck(lines, variables)
+    print(f"\nVariables: {variables}")
+    print(f"\nMethods: {methods}")
     return flag
 
 def main():

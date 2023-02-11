@@ -1,1 +1,13 @@
-robot_rvarsaprocsa[abcd]b[abcd][abcd]
+ROBOT_R
+VARS nom, x, y, one
+PROCS
+putCB [ abcd ]
+
+goNorth [ abcd ]
+
+goWest [ abcd ]
+
+[
+goto: 3,3;
+putCB: 2,1
+]
