@@ -209,9 +209,7 @@ def blockCheck(instruction: str, variables: list, methods: dict) -> bool:
 def instructionsCheck(variables: dict, methods: dict) -> tuple:
     flag = True
     # Check every method body, ignore last one since it is instructions
-    keys = list(methods.keys())
-    for methodkey in keys[:-1]:
-        method = methods[methodkey]
+    for method in methods.values()[:-1]:
         # Remove the "[" and "]" from the body at the start and end
         body = method["body"][1:-1]
         # Get their arguments, separated by "|" and "|" at the start of body, no arguments is "||", after them are the instructions
@@ -230,9 +228,8 @@ def instructionsCheck(variables: dict, methods: dict) -> tuple:
         # Divide arguments by "," and check if they are valid if they start with a letter and are alphanumeric
         args = argstr.split(",")
         for arg in args:
-            if len(arg) > 0:
-                if arg[0] not in alphabet:
-                    flag = False
+            if arg[0] not in alphabet:
+                flag = False
             for char in arg:
                 if char not in alphanumeric:
                     flag = False
@@ -242,19 +239,9 @@ def instructionsCheck(variables: dict, methods: dict) -> tuple:
         body = body[idx+1:]
         # Get the instructions, they are separated by ";", do split and check each one
         instructionslst = body.split(";")
-        # print(instructionslst)
         # Subordinate the cheking of instruction blocks
         for instruction in instructionslst:
             flag = blockCheck(instruction, variables, methods)
-    # # Check the last block: instructions
-    # instructionsblock = methods["instructionsblock0"]
-    # # Remove the "[" and "]" from the body at the start and end
-    # body = instructionsblock["body"][1:-1]
-    # # This one doesn't have arguments, so just check the instructions
-    # instructionslst = body.split(";")
-    # # Subordinate the cheking of instruction blocks
-    # for instruction in instructionslst:
-    #     flag = blockCheck(instruction, variables, methods)
     return methods, flag
 
 def varsCheck(lines: str) -> tuple:
@@ -369,7 +356,7 @@ def syntax(lines: list) -> bool:
     flag = True
     # Convert lines to string to manage them easier
     lines = "".join(nltk.word_tokenize("\n".join(lines))).lower()
-    # print(lines)
+    print(lines)
     # Check if str starts with ROBOT_R
     if not lines.startswith("robot_r"):
         flag = False
@@ -382,10 +369,10 @@ def syntax(lines: list) -> bool:
         variables, lines, flag = varsCheck(lines)
     methods, lines, flag = procsCheck(lines, variables)
     methods, flag = instructionsCheck(variables, methods)
-    # print(f"\nVariables: {variables}")
-    # #print(f"\nMethods: {methods}")
-    # for i in methods:
-    #     print(f"\nKey: {i}")
+    print(f"\nVariables: {variables}")
+    #print(f"\nMethods: {methods}")
+    for i in methods:
+        print(f"\nKey: {i}")
     return flag
 
 def main():
@@ -401,17 +388,13 @@ def main():
             file = open(filename, "r")
             print("\nFile opened successfully!\n")
             lines = file.readlines()
-            # try:
-            #     if syntax(lines):
-            #         print("\nSyntax is correct!\n")
-            #     else:
-            #         print("\nSyntax is incorrect!\n")
-            # except Exception as e:
-            #     print(f"\nSyntax is incorrect!\n")
-            if syntax(lines):
-                print("\nSyntax is correct!\n")
-            else:
-                print("\nSyntax is incorrect!\n")
+            try:
+                if syntax(lines):
+                    print("\nSyntax is correct!\n")
+                else:
+                    print("\nSyntax is incorrect!\n")
+            except Exception as e:
+                print(f"\nSyntax is incorrect!\n")
             file.close()
             end = input("Enter to continue or 'stop' to finish\n")
             if end == "stop":

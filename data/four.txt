@@ -1,0 +1,21 @@
+ROBOT_R
+VARS a,b,c
+PROCS
+
+procedimiento [|p,d| 
+jumpInDir: a, north;
+if: facing: south then: [goto: 3,a] else: [goto: 3,a];
+procedimiento:5,2;
+]
+
+procedimiento2 [||
+jumpInDir: a, north;
+if: facing: south then: [goto: 3,a] else: [goto: 3,a];
+procedimiento:5,2;
+]
+
+[
+jumpInDir: a, north;
+if: facing: south then: [goto: 3,a] else: [goto: 3,a];
+procedimiento:5,2;
+]
